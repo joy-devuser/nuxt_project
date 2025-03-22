@@ -199,20 +199,27 @@ async function fetchWithRetry(
   }
 }
 
+/**
+ * Fetch data from API
+ * @param apiUrl - API URL
+ * @param perPage - Number of items per page
+ * @param retries - Number of retry attempts
+ * @returns - Array of fetched data
+ */
 async function fetchData(
   apiUrl: string,
   perPage: number,
   retries: number = MAX_RETRIES
 ): Promise<string[] | undefined> {
   try {
-    const response = await axios.get(`${apiUrl}?per_page=${_perPage}`); //totalの算出に関わるので、変えたくない
+    const response = await axios.get(`${apiUrl}?per_page=${perPage}`); //totalの算出に関わるので、変えたくない
     const totalPages = Number(response.headers["x-wp-totalpages"]);
-    console.log(`${apiUrl}?per_page=${_perPage}--${totalPages}`);
+    console.log(`${apiUrl}?per_page=${perPage}--${totalPages}`);
 
     const fetchDataList = [];
     for (let page = 1; page <= totalPages; page++) {
       const pageResponse = await axios.get(
-        `${apiUrl}?per_page=${perPage}&=page${page}`
+        `${apiUrl}?per_page=${perPage}&page=${page}`
       );
       fetchDataList.push(...pageResponse.data);
     }
